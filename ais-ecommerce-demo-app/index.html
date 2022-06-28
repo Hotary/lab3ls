@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+
+  <link rel="shortcut icon" href="./favicon.png">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/satellite-min.css">
+  <link rel="stylesheet" href="./src/index.css">
+  <link rel="stylesheet" href="./src/app.css">
+
+  <title>webstore</title>
+</head>
+
+<body>
+  <div class="ais-InstantSearch">
+    <h1>Lab3: WebStore</h1>
+    <script>
+      
+    </script>
+    <img id="cartOpenBtn" class="cart" src="cart.png" onclick="openPurschase()"/>
+    <div class=content>
+      <div class="left-panel">
+        <div id="clear-refinements"></div>
+    
+        <h2>Manufacturers</h2>
+        <div id="manufacturer-list"></div>
+      </div>
+      <div class="right-panel">
+        <div class="search-panel__filters">
+          <div id="dynamic-widgets"></div>
+        </div>
+        <div id="searchbox"></div>
+        <div id="hits"></div>
+        <div id="pagination"></div>
+      </div>
+    </div>
+    <div id="cartContent">
+      <div id="cartProducts">
+        <div class="cartProduct">
+          <div class="left-panel">
+            <p> Name </p>
+            <p> Price: </p>
+            <p> Count: 1 </p>
+          </div>
+          <div class="right-panel">
+            <a class="cartBtn buttonClass" onclick="">Add</a> 
+            <a class="cartBtn buttonClass" onclick="">Remove</a> 
+            <a class="cartBtn buttonClass" onclick="">Remove All</a> 
+          </div>
+        </div>
+      </div>
+        </div>
+  </div>
+  
+
+  <script type="module">
+    // default version
+    import algoliasearch from "algoliasearch";
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.42.0"></script>	
+
+  <script src="./src/app.js" type="module" ></script>
+  <script>
+addPurschasee = function(id) { addPurschase(id) }
+
+
+
+openPurschase = function(){
+  var cartblock = document.getElementById("cartContent")
+  if (cartblock.style.display != "none")
+  {
+    flagPurschase = false
+    cartblock.style.display = "none";
+    cartblock.innerHTML = "";
+  }else{
+    flagPurschase = true
+    cartblock.style.display = "block";
+
+    cart = window.localStorage.getItem('cart');
+    if (cart == null)
+    {
+      cart = {};
+    }else{
+      cart = JSON.parse(cart)
+        for (let p in cart) {
+          var obj = cart[p]
+
+          cartblock.innerHTML += `<div class="cartProduct" id="` + obj.sku +`">
+            <div class="left-panel">
+              <p>` + obj.name +`</p>
+              <p> Price: ` + obj.price + `</p>
+              <p id="count"> Count: ` + obj.count +` </p>
+            </div>
+            <div class="right-panel">
+              <a class="cartBtn buttonClass" id="addCartBtn">Add</a> 
+              <a class="cartBtn buttonClass" id="removeCartBtn">Remove</a> 
+              <a class="cartBtn buttonClass" id="removeAllCartBtn">Remove All</a> 
+            </div>
+          </div>`
+
+
+          
+          x = document.getElementById(obj.sku);
+          x.querySelector('#addCartBtn').onclick = function() 
+          {
+            obj.count += 1;
+            cart[obj.sku] = obj;
+            window.localStorage.setItem('cart', JSON.stringify(cart) );
+            x.querySelector('#count').innerHTML = "Count: " + obj.count;
+          }
+
+          
+          x.querySelector('#removeCartBtn').onclick = function() 
+          {
+            obj.count -= 1;
+            if (obj.count > 0) {
+              cart[obj.sku] = obj;
+              window.localStorage.setItem('cart', JSON.stringify(cart) );
+              x.querySelector('#count').innerHTML = "Count: " + obj.count;
+            }else{
+              delete cart[obj.sku]
+
+              window.localStorage.setItem('cart', JSON.stringify(cart) );
+              x.remove();
+            }
+          }
+
+          x.querySelector('#removeAllCartBtn').onclick = function() 
+          {
+            delete cart[obj.sku]
+
+            window.localStorage.setItem('cart', JSON.stringify(cart) );
+            x.remove();
+          }
+        }
+    }
+  }
+}
+
+document.getElementById("cartOpenBtn").onclick = openPurschase;
+  </script>
+</body>
+
+</html>
